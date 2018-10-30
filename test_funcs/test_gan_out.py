@@ -36,7 +36,7 @@ fake = model(z)
 np_fake = fake.detach().numpy()
 voxels = np.reshape(fake.detach().numpy(), (64, 64, 64))
 
-voxels = downsample(voxels, 2, method='max')
+#voxels = downsample(voxels, 2, method='max')
 visualization(voxels, 0.5, title=None, uniform_size=1, use_colormap=False, angle=0.3)
 
 
