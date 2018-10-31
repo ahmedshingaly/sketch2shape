@@ -5,6 +5,9 @@
 
 # GAN Models
 models_cpu/
+models_cpu_non_converted/
+data/
+
 
 # User-specific files
 *.suo

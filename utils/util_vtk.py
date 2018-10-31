@@ -1,7 +1,8 @@
-from test_funcs.util import *
+from utils.util import *
 import matplotlib.cm
 import vtk
 import math
+
 
 ############################################################################
 ### VTK functions
@@ -100,7 +101,7 @@ def generate_all_blocks(voxels, threshold=0.1, uniform_size=-1, use_colormap=Fal
     return actors
 
 
-def display(actors, cam_pos, cam_vocal, cam_up, title=None):
+def display(actors, cam_pos, cam_vocal, cam_up, title=None, filename="screenshot.png"):
     """ Display the scene from actors.
     cam_pos: list of positions of cameras.
     cam_vocal: vocal point of cameras
@@ -144,7 +145,7 @@ def display(actors, cam_pos, cam_vocal, cam_up, title=None):
     w2if.Update()
 
     writer = vtk.vtkPNGWriter()
-    writer.SetFileName("screenshot.png")
+    writer.SetFileName(filename)
     writer.SetInputData(w2if.GetOutput())
     writer.Write()
 
@@ -154,12 +155,15 @@ def display(actors, cam_pos, cam_vocal, cam_up, title=None):
     # close_window(iren)
     # del renWin, iren
 
+
 def close_window(iren):
     render_window = iren.GetRenderWindow()
     render_window.Finalize()
     iren.TerminateApp()
 
-def visualization(voxels, threshold, title=None, uniform_size=-1, use_colormap=False, angle=0.43):
+
+def visualization(voxels, threshold, title=None, uniform_size=-1, use_colormap=False, angle=0.43,
+                  filename="screenshot.png"):
     """
     Given a voxel matrix, plot all occupied blocks (defined by voxels[x][y][z] > threshold)
     if size_change is set to true, block size will be proportional to voxels[x][y][z]
@@ -175,4 +179,4 @@ def visualization(voxels, threshold, title=None, uniform_size=-1, use_colormap=F
     rad = math.pi * angle  # + math.pi
     cam_pos = [center[0] + distance * math.cos(rad), center[1] + distance * math.sin(rad), center[2] + height]
 
-    display(actors, cam_pos, center, (0, 0, 1), title=title)
+    display(actors, cam_pos, center, (0, 0, 1), title=title, filename=filename)
