@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="UTF-8">
+        <title> Sketch 2 Shape - Danahive + Pinochet 6s198</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+        <script src= 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js'></script>  
+        <script src= 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js' ></script>
+        <script src= 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js'></script>
+        <script src= 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.js' ></script>
+        <script src= '/static/modalF.js'></script>
+
+        <style>
+            .modal{
+                   display: none; 
+            }
+        </style>
+
+
+    </head>
+
+
+    <body class='grey'>
+        <div class= 'row'>
+            <div class= 'col s12 m12 l12 center'>
+            
+                  <h1 class= 'white-text center' > Sketch2Shape </h1>  
+            
+            </div>            
+        </div>
+
+        <div class='row'>
+            <div class="col s8 m6 l14 offset-s2 offset-m3 offset-l4 white z-depth-3"> 
+                <form action="">
+                    <!-- <div class='row'>
+                            <div class="col s12 m12 l12">
+                                <input type='text' class='center' placeholder="Nickname" required>
+
+                            </div>                    
+                    </div> -->
+
+                    <!-- <div class='row'>
+                        <div class="col s12 m12 l12 center">
+                                <input type='color'>
+                        </div>
+                    </div> -->
+
+                    <!-- <div class='row'>
+                            <div class="col s12 m12 l12 center ">
+                                <button type='submit' class="btn red m-open" m-open="canvas">Enter APP</button>
+                            </div>
+                    </div> -->
+                </form>
+            </div>
+        </div>
+
+        <div class="m-modal" m-modal='canvas'>
+            <div class='m-body' id="canvas">
+            </div>
+        </div>
+        <script type='text/javascript'> 
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            var users= [];
+            var points =[];
+            var myUser ={};
+
+
+
+            $(document).ready(function(){
+                $('form').on('submit', function(e){
+                        e.preventDefault();
+
+                        var name= $('input[type="text"]').val();
+                        var color=$('input[type="color"]').val();
+
+                        myUser.nombre =name;
+                        myUser.color= color;
+                        myUser.id= socket.id;
+
+                        myUser.x = windowHeight/2;
+                        myUser.y =windowWidth/2;
+
+                        $('.m-open').modalF({color:"#333"});
+                        $('button').trigger('click');
+
+                        socket.emit('addUsuario', myUser);
+                    });
+                    
+                    socket.on('executedGAN', function(data){
+                     //users= data;
+                     console.log(data);       
+                });
+            });
+
+        // Using P5 funcitonality         
+        //p5 functions
+        function setup() {
+
+            var myCanvas= createCanvas(windowWidth,windowHeight,WEBGL);
+            myCanvas.parent("canvas");
+
+            angle = 0;
+            cubeWidth= 15;
+            cubeHeight= 15;
+            cubeDepth= 15;
+
+            cubecountX= 12;
+            cubecountY= 12;
+            cubecountZ= 12;
+
+            button = createButton('GANify!');
+            button.position(windowWidth/5,windowHeight/4);
+            button.mousePressed(RunGan);
+        }
+
+        function draw() {
+            background('#333');
+            // $.each(users, function(index, u){
+            //     fill(u.color);
+            //     text('hello', u.x, u.y);
+
+            // });
+            //adds the camera fucntion to the scene 
+
+            let fov= PI/3;
+
+            let camZ = (height/2.0) / tan(fov/2.0);
+            perspective(fov, width/height,camZ/10.0, camZ*10.0);
+
+            orbitControl();
+
+            //add a directional light 
+            directionalLight(255,255,0, 0,0,-0.5)
+            //directionalLight(0,0,255, 0.3,0,0.5)
+
+            rectMode(CENTER);
+            translate(0,0,0);
+            //normalMaterial();
+            //ambientMaterial(255); //Only renders what receives light 
+            stroke(0.05);
+            specularMaterial(240,248,255);
+
+
+            for (let i=0;i<cubecountX;i++)
+            {
+                for (let j=0;j<cubecountY;j++)
+                {
+                    for (let k=0;k<cubecountZ;k++)
+                    {                    
+                        push();
+                        // rotateX(angle);
+                        // rotateY(angle*0.02);
+                        // rotateZ(angle*0.1);
+                        box(i*cubeWidth,j*cubeHeight,k*cubeDepth);
+                        pop();
+                    
+                    }
+                }
+            }
+
+            //angle +=0.03;
+        }
+        
+        function RunGan(){
+           var data ={
+               d1:"data from GAN", 
+               d2:"data to GAN",
+               d2:"data everywhere"
+               }               
+           socket.emit('ganify', data);  
+            console.log(RandomVoxel());
+        }
+        
+        function RandomVoxel(){
+            var arr = new Array(cubecountX);
+
+            // create 3D
+            for (i = 0; i < cubecountX; i++) {
+                for (j = 0; j < cubecountY; j++) {
+                    arr[i][j] = new Array(cubecountZ);
+                }
+            }
+
+            for (i = 0; i < cubecountX; i++) {
+                for (j = 0; j < cubecountY; j++) {
+                    for (k = 0; k< cubecountZ; k++) {
+                        arr[i][j][k].push(Math.round(Math.random()));
+                    }
+                }
+             }
+
+             return arr;
+
+
+        }    
+
+
+
+        function windowResized(){
+
+            resizeCanvas(windowWidth, windowHeight);
+        }
+
+        
+        </script>
+
+    </body>
+</html>
