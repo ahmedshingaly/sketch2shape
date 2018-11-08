@@ -65,7 +65,9 @@
             var points =[];
             var myUser ={};
 
+            var arrVoxels= [];
 
+            var arrVals = []; //temp array for voxelvalues form python 
 
             $(document).ready(function(){
                 $('form').on('submit', function(e){
@@ -101,17 +103,20 @@
             myCanvas.parent("canvas");
 
             angle = 0;
-            cubeWidth= 15;
-            cubeHeight= 15;
-            cubeDepth= 15;
+            cubeSize= 15;
+            // cubeHeight= 15;
+            // cubeDepth= 15;
 
-            cubecountX= 12;
-            cubecountY= 12;
-            cubecountZ= 12;
+            cubecountX= 25;
+            cubecountY= 25;
+            cubecountZ= 25;
 
             button = createButton('GANify!');
             button.position(windowWidth/5,windowHeight/4);
             button.mousePressed(RunGan);
+
+            //initialize VozelSpace with random values
+            RandomVoxel()
         }
 
         function draw() {
@@ -131,66 +136,93 @@
             orbitControl();
 
             //add a directional light 
-            directionalLight(255,255,0, 0,0,-0.5)
-            //directionalLight(0,0,255, 0.3,0,0.5)
+            directionalLight(255,255,255, 0,0,-0.5)
 
             rectMode(CENTER);
             translate(0,0,0);
-            //normalMaterial();
-            //ambientMaterial(255); //Only renders what receives light 
+  
             stroke(0.05);
-            specularMaterial(240,248,255);
+            
 
+            //push();
 
             for (let i=0;i<cubecountX;i++)
             {
+                arrVoxels[i]= [];
                 for (let j=0;j<cubecountY;j++)
                 {
+                    arrVoxels[i][j]= [];
                     for (let k=0;k<cubecountZ;k++)
                     {                    
-                        push();
-                        // rotateX(angle);
-                        // rotateY(angle*0.02);
-                        // rotateZ(angle*0.1);
-                        box(i*cubeWidth,j*cubeHeight,k*cubeDepth);
-                        pop();
-                    
+                        arrVoxels[i][j][k]= new Voxel(i*cubeSize,j*cubeSize,k*cubeSize, cubeSize, arrVals[i][j][k]);   
+
+                       
+
                     }
                 }
             }
+
+            for (let i=0;i<cubecountX;i++)
+            {
+                
+                for (let j=0;j<cubecountY;j++)
+                {
+                   
+                    for (let k=0;k<cubecountZ;k++)
+                    {                    
+                        if (arrVoxels[i][j][k].getRenderVal()==true)
+                       {
+                            push();
+                            translate(i*cubeSize,j*cubeSize,k*cubeSize);
+                            arrVoxels[i][j][k].display();
+                            pop();
+                       }              
+                    }
+                }
+            }
+
+            
+            //pop();
 
             //angle +=0.03;
         }
         
         function RunGan(){
            var data ={
-               d1:"data from GAN", 
-               d2:"data to GAN",
-               d2:"data everywhere"
+               d1:"java talking back to python", 
+               d2:"pretty cool",
+               d2:"oh yeah"
                }               
            socket.emit('ganify', data);  
-            console.log(RandomVoxel());
+        RandomVoxel();
         }
         
-        function RandomVoxel(){
-            var arr = new Array(cubecountX);
+        function RandomVoxel(){ 
 
             // create 3D
             for (i = 0; i < cubecountX; i++) {
+                arrVals[i]= [];
                 for (j = 0; j < cubecountY; j++) {
-                    arr[i][j] = new Array(cubecountZ);
+                    arrVals[i][j]=[];
+                    for (k = 0; k < cubecountY; k++)
+                    {                        
+                        if (Math.random() >0.75){
+                            arrVals[i][j][k]=true;  
+                        } else {
+                            arrVals[i][j][k]=false;  
+                        }               
+                        // if (k%2 ==0){
+                        //     arrVals[i][j][k]=false;  
+                        // }  else{
+                        //     arrVals[i][j][k]=true;  
+                        // }
+                    }
                 }
             }
 
-            for (i = 0; i < cubecountX; i++) {
-                for (j = 0; j < cubecountY; j++) {
-                    for (k = 0; k< cubecountZ; k++) {
-                        arr[i][j][k].push(Math.round(Math.random()));
-                    }
-                }
-             }
-
-             return arr;
+           
+            console.log(arrVals);
+             return arrVals;
 
 
         }    
@@ -202,6 +234,42 @@
             resizeCanvas(windowWidth, windowHeight);
         }
 
+
+        class Voxel{
+            //constructor
+            constructor(x,y,z,size, renderVal){
+                this.x= x;
+                this.y=y;
+                this.z=z;
+                this.size= size;
+                this.renderVal= renderVal;
+            }
+            
+            display()
+            {
+                //console.log("vlacaosdaisdi");
+                //translate(0,0,0);
+  
+                stroke(0.05);
+                //directionalLight(255,255,0, 0,0,-0.5)
+
+                
+                
+                    specularMaterial(255,128,0);
+                    
+                    box(this.size);
+                    
+                
+            }    
+
+            getRenderVal(){
+
+                return this.renderVal;
+            }
+           
+        
+
+        }
         
         </script>
 

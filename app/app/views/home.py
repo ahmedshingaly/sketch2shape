@@ -23,6 +23,6 @@ def addUser(user):
 def RunGan(data):
     print(data) #here we call Renauds program
 
-    newData='{d1:"many voxels",d2:"many voxels",d3:"a gazillion voxels"}'
-
+    #newData='{d1:"many voxels",d2:"many voxels",d3:"a gazillion voxels"}'
+    newData= 'this is python talking to JS - Hi JS!' 
     emit('executedGAN', newData, broadcast=True)
