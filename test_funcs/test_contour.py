@@ -5,7 +5,7 @@ from scipy.interpolate import splprep, splev
 from sklearn.cluster import KMeans
 from matplotlib import pyplot as plt
 
-show_steps = False
+show_steps = True
 image = cv2.imread("screenshot.png")
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 colors = [7, 42, 77, 255]

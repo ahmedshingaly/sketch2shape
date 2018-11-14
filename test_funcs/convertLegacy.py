@@ -322,9 +322,9 @@ class LambdaReduce(LambdaBase):
     return n
 
 if __name__=="__main__":
-    parser = argparse.ArgumentParser(description='Convert torch t7 model to pytorch')
-    parser.add_argument('--model', '-m', type=str, required=True,
-                        help='torch model file in t7 format')
+    parser = argparse.ArgumentParser(description='Convert torch t7 iv3_model to pytorch')
+    parser.add_argument('--iv3_model', '-m', type=str, required=True,
+                        help='torch iv3_model file in t7 format')
     parser.add_argument('--output', '-o', type=str, default=None,
                         help='output file name prefix, xxx.py xxx.pth')
     args = parser.parse_args()

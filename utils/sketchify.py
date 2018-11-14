@@ -1,9 +1,6 @@
-from skimage import exposure
 import numpy as np
 import cv2
 from scipy.interpolate import splprep, splev
-from sklearn.cluster import KMeans
-from matplotlib import pyplot as plt
 
 
 def bbox(contour):
@@ -13,7 +10,7 @@ def bbox(contour):
     return width, height
 
 
-def sketchify(image_file, out_file, min_contour_dim=0.2, precision=0.0001, smoothing=2000, resolution=1000,
+def sketchify(image_file, out_file, min_contour_dim=0.3, precision=0.0001, smoothing=5000, resolution=1000,
               output_dim=(200, 200), colors=[7, 42, 77, 255], diff_threshold=5, cropping=20, bspline_degree=3):
     image = cv2.imread(image_file)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

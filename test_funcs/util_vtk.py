@@ -148,8 +148,8 @@ def display(actors, cam_pos, cam_vocal, cam_up, title=None):
     writer.SetInputData(w2if.GetOutput())
     writer.Write()
 
-    # iren.Initialize()
-    # iren.Start()
+    iren.Initialize()
+    iren.Start()
     #
     # close_window(iren)
     # del renWin, iren
