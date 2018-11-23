@@ -94,7 +94,7 @@ tb = keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, write_graph
                                  write_images=False, embeddings_freq=0, embeddings_layer_names=None,
                                  embeddings_metadata=None, embeddings_data=None)
 
-# fit the iv3_model with the TensorBoard callback
+# fit the model with the TensorBoard callback
 history = model.fit(
     X_train, Y_train,
     batch_size=64,

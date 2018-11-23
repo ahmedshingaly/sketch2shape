@@ -15,7 +15,7 @@ model_path = r"data/models/mappingNN2"
 # load InceptionV3 iv3_model
 iv3_input = (139, 139, 3)
 print("Loading Inception V3 Model")
-iv3_model = load_model("inceptionv3.h5")
+iv3_model = load_model('inceptionv3.h5')
 # load mapping model
 print("Loading Mapping Model")
 mapping_model = load_model(model_path)

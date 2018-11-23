@@ -8,6 +8,7 @@ import keras
 import scipy
 import cv2
 from keras.applications.inception_v3 import InceptionV3, preprocess_input
+from keras.models import load_model
 
 # extract, process, and save bottleneck features
 
@@ -35,9 +36,14 @@ images = np.array(images)
 raw_features.dump(raw_features_path)
 
 # load InceptionV3 iv3_model
-model = InceptionV3(weights='imagenet', include_top=True, input_shape=iv3_input)
-model = keras.Model(inputs=model.input, outputs=model.get_layer('avg_pool').output)
 
+iv3path = "inceptionv3.h5"
+if iv3path not in os.listdir():
+    model = InceptionV3(weights='imagenet', include_top=True, input_shape=iv3_input)
+    model = keras.Model(inputs=model.input, outputs=model.get_layer('avg_pool').output)
+    model.save(iv3path)
+else:
+    model = load_model(iv3path)
 # extract bottleneck features
 features = model.predict(images, batch_size=64, verbose=1)
 features.dump(features_path)
