@@ -8,7 +8,8 @@ models_cpu/
 models_cpu_non_converted/
 data/
 logs/
-
+*.h5
+*.gz
 
 # User-specific files
 *.suo
