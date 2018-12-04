@@ -1,4 +1,6 @@
 import torch as torch
+import sys
+sys.path.append(r"C:\Users\renau\Dropbox (MIT)\1_PhD\Code\Machine Learning\6s198_project\sketch2shape")
 from torch.legacy import nn as nn
 import test_funcs.convertLegacy as c
 import numpy as np
@@ -23,8 +25,8 @@ random_subvec = np.random.random(n_dim)
 latent_vec = np.zeros(latent_size)
 latent_vec[n_dim:2*n_dim] = random_subvec
 
-# z = torch.randn(batch_size, latent_size, device=device) * 1
-z = torch.Tensor(latent_vec)
+z = torch.randn(batch_size, latent_size, device=device) * 1
+# z = torch.Tensor(latent_vec)
 print(z)
 z = z.view(1, -1, 1, 1, 1)
 print(z.size())
@@ -41,5 +43,5 @@ fake = model(z)
 np_fake = fake.detach().numpy()
 voxels = np.reshape(fake.detach().numpy(), (64, 64, 64))
 
-voxels = downsample(voxels, 4, method='max')
+voxels = downsample(voxels, 2, method='max')
 visualization(voxels, 0.5, title=None, uniform_size=1, use_colormap=False, angle=0.3)

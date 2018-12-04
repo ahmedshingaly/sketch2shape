@@ -1,4 +1,3 @@
-from skimage import exposure
 import numpy as np
 import cv2
 from scipy.interpolate import splprep, splev
@@ -8,14 +7,14 @@ from matplotlib import pyplot as plt
 show_steps = True
 image = cv2.imread("screenshot.png")
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-colors = [7, 42, 77, 255]
+colors = [255]#[7, 42, 77, 255]
 images = []
 diff_threshold = 5
 percentile = 90
 bspline_degree = 3
 precision = 0.00001
 smoothing = 1000
-resolution = 10000
+resolution = 100
 
 
 def show_image(img):
@@ -24,24 +23,29 @@ def show_image(img):
     cv2.destroyWindow('image')
 
 
+cropping = 20
+
 for c in colors:
     temp = gray.copy()
     color_filter = np.abs(temp - c) > diff_threshold
     temp[color_filter] = 255
     temp[~color_filter] = 0
+    if c != 255:
+        temp = cv2.bitwise_not(temp)
+    # temp = temp[cropping:temp.shape[0] + cropping, cropping:temp.shape[1] + cropping]
     images.append(temp)
     if show_steps: show_image(temp)
 
 all_contours = []
 for image in images:
     # gray = cv2.bilateralFilter(image, 11, 3, 5)
-    if show_steps: show_image(image)
-    edged = cv2.Canny(image, 30, 200, 200)
-    if show_steps: show_image(edged)
+    # if show_steps: show_image(image)
+    # edged = cv2.Canny(image, 30, 200, 200)
+    # if show_steps: show_image(edged)
     # find contours in the edged image, keep only the largest
     # ones, and initialize our screen contour
     im2, contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    #contours = contours[1:]
+    # contours = contours[1:]
     if len(contours) != 0:
         contours1 = sorted(contours, key=cv2.contourArea, reverse=True)
         contours_areas = np.array(list(map(lambda x: cv2.contourArea(x), contours1)))
@@ -54,8 +58,8 @@ for image in images:
         length_filter = contours_lengths > length_cutoff
         contours2 = [c for (c, f) in zip(contours2, length_filter) if f]
         contours = []
-        contours.extend(contours1)
-        contours.extend(contours2)
+        contours.extend(contours1[0:1])
+        # contours.extend(contours2[0:1])
 
         im = cv2.drawContours(image.copy(), contours, -1, (150, 150, 150), 3)
         if show_steps: show_image(im)
@@ -91,9 +95,11 @@ for image in images:
         if show_steps: show_image(im)
 
 all_contours = sorted(all_contours, key=lambda x: cv2.arcLength(x, False), reverse=True)
+print(all_contours)
+print(np.array(all_contours).shape)
 im = cv2.drawContours(np.ones(image.shape), np.array(all_contours, dtype=np.int32), -1, (0, 0, 0), 2)
-cropping = 20
-im = im[cropping:im.shape[0]+cropping,cropping:im.shape[1]+cropping]
+# cropping = 20
+# im = im[cropping:im.shape[0] + cropping, cropping:im.shape[1] + cropping]
 cv2.imshow("Sketch", im)
 cv2.waitKey(0)
 cv2.destroyWindow("Sketch")

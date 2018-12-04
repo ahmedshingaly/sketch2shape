@@ -12,6 +12,8 @@ logs/
 *.gz
 *.tar.gz
 
+nn_model
+
 # User-specific files
 *.suo
 *.user

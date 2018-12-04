@@ -51,4 +51,4 @@ features.dump(features_path)
 # features = np.squeeze(features)
 #
 # features = iv3_model.predict(inception_input_train)
-# features = np.squeeze(features)
+# # features = np.squeeze(features)
